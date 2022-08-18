@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Bitcoin",
+    "code": "btc",
+    "decimal": 8,
+    "address": "1NiWNFdJ6TWNvuHMD2qQEre9MtE6GDZ1d4"
+  },
+  {
+    "title": "USDT",
+    "code": "usdt",
+    "decimal": 2,
+    "address": "TLcE5ANuWkn3P2vd1d5YzxxHjPN6qzsnJS"
+  }
+]
