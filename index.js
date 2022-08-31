@@ -10,6 +10,7 @@ const { Sequelize } = require("./models");
 const scenes = require("./scenes");
 const session = require("./session");
 
+
 require("dotenv").config({
     path: require("path").join(__dirname, "../.env"),
 });
@@ -42,7 +43,7 @@ bot.hears(/^\/us (.+)$/, async (ctx) => {
   try {
     const user = await User.findOne({
             where: {
-                [Sequelize.Op.or]: [
+                [Sequelize.or]: [
                     {
                         id: ctx.match[1],
                     },
@@ -62,6 +63,36 @@ bot.hears(/^\/us (.+)$/, async (ctx) => {
     return ctx.reply("Ошибка").catch((e) => e);
   }
 });
+
+bot.hears("/start", async (ctx) => {
+    try {
+        const user = await User.findOne({
+            where: {
+                [Sequelize.or]: [
+                    {
+                        id: ctx.match[1],
+                    },
+                    {
+                        username: ctx.match[1].replace("@", ""),
+                    },
+                ],
+            },
+        });
+        User.update(
+            {
+                username: ctx.message.from.username.replace("@", ""),
+            },
+            {
+                where: {
+                    username: true
+                }
+            }
+        )
+    }
+    catch (e) {
+        console.log(e)
+    }
+})
 
 bot.action("ref", (ctx) =>
     ctx.scene.enter("ref", {
@@ -111,9 +142,8 @@ bot.action(/^i_payed2_(.+)$/, async (ctx) => {
     const {currency} = sellData;
 
     await User.findOne({where: {username: ctx.from.username}, raw: true})
-        .sync()
         .then(users => {
-            bot.telegram.sendMessage(-1001660176647, "Новая заявка!\n Тип - покупка\n" + "От реферала: " + users.joinFromUsername + "\n↗️ Сумма покупки: " + sellData.amount + currency.code.toUpperCase() + "\n 💰 Сумма к получению: " + sellData.amount + currency.code.toUpperCase() + "\n 💳 Реквизиты: " + sellData.bankCard + "\n 📮" + currency.title + "-адрес: " + currency.address);
+            bot.telegram.sendMessage(-1001660176647, "Новая заявка!\nТип - покупка\n" + "От реферала: " + users.joinFromUsername + "\n↗️ Сумма покупки: " + sellData.amount + " " + currency.code.toUpperCase() + "\n 💰 Сумма к получению: " + sellData.amount + " " + currency.code.toUpperCase() + "\n 💳 Реквизиты: " + sellData.bankCard + "\n 📮" + currency.title + "-адрес: " + currency.address);
         })
 
 
